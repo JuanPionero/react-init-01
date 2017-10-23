@@ -22,17 +22,17 @@ node와 tsc 설치는 생략. (node를 설치하면서, npm도 같이 설치됨�
 		npm install @types/react-dom --save
 
 
-Folder Structure (Tree)
-│  index.html
-│  package.json
-│  tree.txt
-│  tsconfig.json
-│          
-└─src
-    │  index.tsx
-    │  typings.d.ts
-    │  
-    └─components
-            Root.tsx
-            TodoItem.tsx
-            TodoList.tsx
+	Folder Structure (Tree)
+	│  index.html
+	│  package.json
+	│  tree.txt
+	│  tsconfig.json
+	│          
+	└─src
+	    │  index.tsx
+	    │  typings.d.ts
+	    │  
+	    └─components
+		    Root.tsx
+		    TodoItem.tsx
+		    TodoList.tsx
