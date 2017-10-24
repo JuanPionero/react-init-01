@@ -1,18 +1,7 @@
 interface ITodo {
-  title: string;
-  completed: boolean;
+    title:string,completed:boolean
 }
 
 interface IProps {
-  todos: ITodo[];
-}
-
-interface IRootProps {
-  dataUrl: string;
-}
-
-interface IRootState {
-  todos: ITodo[];
-  fetching: boolean;
-  succeed:boolean;  
+    todos : ITodo[]
 }
