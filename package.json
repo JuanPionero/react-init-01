@@ -2,7 +2,7 @@
   "name": "todolist",
   "version": "0.0.1",
   "description": "",
-  "main": "index.tsx", 
+  "main": "index.tsx",
   "author": "",
   "license": "MIT",
   "dependencies": {
