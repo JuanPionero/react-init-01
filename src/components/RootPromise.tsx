@@ -11,8 +11,6 @@ class RootPromise extends React.Component<IRootProps,IRootState> {
         }
     }
 
-
-
     componentDidMount() {
         this.sendRequest();
     }
@@ -20,13 +18,11 @@ class RootPromise extends React.Component<IRootProps,IRootState> {
     sendRequest() {
         const prom = new Promise((resolve,reject)=>{
             const req = new XMLHttpRequest();
+            
             // 동기로 실행.
             req.open("GET",this.props.dataUrl,false);
-
-            this.setState({...this.state,fetching:true,succeed:false})
-            setTimeout(()=>{  
-                req.send(null);
-                // 보내고 나서 기다림. 동기화된 요청을 보냄.
+            req.onreadystatechange = () => {
+                console.log("onreadystatechange: [req]" + req);
                 if (req.readyState == 4) {
                     if(req.status == 200) {
                         // Success
@@ -34,17 +30,38 @@ class RootPromise extends React.Component<IRootProps,IRootState> {
                     } else {
                         reject();
                     }
-                 }
+                }
+            }
+            req.onload = () => {
+                console.log("onload: [req]" + req);
+            };
+            req.onerror = () => {
+                console.log("onerror: [req]" + req);
+            }
+
+            this.setState({...this.state,fetching:true,succeed:false})
+            setTimeout(()=>{  
+                req.send(null); // 보내고 나서 기다림. 동기화된 요청을 보냄.
             },1000);
         });
-        prom.then(this.onRequestSucceed,this.onRequestFailed);
+
+        // bind의 필요성을 잊지 말자.
+        // prom.then(this.onRequestSucceed.bind(this),this.onRequestFailed.bind(this));
+        
+        // this.onRequestSucceed is arrow function
+        // this.onRequestFailed is normal function, then it needs .bind(this)
+        prom.then(this.onRequestSucceed,this.onRequestFailed.bind(this));
         
     }
 
+    /*
+    // 일반 형태의 함수
     onRequestSucceed(response:ITodo[]) {
         this.setState({todos:response,fetching:false,succeed:true});
-    }
-
+    }*/
+    onRequestSucceed = (response:ITodo[]) => this.setState({todos:response,fetching:false,succeed:true});
+    
+    // Arrow Function
     onRequestFailed() {
         this.setState({todos:[],fetching:false,succeed:false});
     }
@@ -69,4 +86,4 @@ class RootPromise extends React.Component<IRootProps,IRootState> {
     }
 }
 
-export default Root;
+export default RootPromise;
