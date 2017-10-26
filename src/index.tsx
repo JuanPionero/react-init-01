@@ -2,7 +2,8 @@ import * as React from "react";
 import * as ReactDOM from "react-dom";
 //import App from "./components/Root";
 //import App from "./components/RootPromise";
-import App from "./components/RootWithAjax";
+// import App from "./components/RootWithAjax";
+import App from "./components/RootWithAxios";
 
 
 // const todos: ITodo[] = [{title:"Start React with Typescript",completed:false},{title:"Asynchronous Communication", completed:false}];
