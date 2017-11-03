@@ -5,23 +5,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Document</title>
-    
+    <!-- off-line (file system) 에서 link는 작동 안하는가???-->
+    <link ref="StyleSheet" type="text/css" href="./css/basic.css">
+    <style>
+        @import url(./css/basic.css);
+    </style>
 </head>
 <body>
-    <div id="app"></div>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js"></script>
-    <script>
-    require.config({
-    // module name mapped to CDN url
-    paths: {
-            // Require.js appends `.js` extension for you
-            'react': 'https://unpkg.com/react@16.0.0/umd/react.development',
-            'react-dom': 'https://unpkg.com/react-dom@16.0.0/umd/react-dom.development',
-            'axios' : 'https://cdnjs.cloudflare.com/ajax/libs/axios/0.17.0/axios'
-        }
-    });
-
-    require(["build/dist/index"]);
-    </script>
+    <div id="app"></div>    
+    <!-- tsconfig.json 의 allowJs : false 로 해야 함. js 파일은 컴파일이 되지 않아야, build/dist의 폴더 구조가 적절해짐.-->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/require.js/2.3.5/require.min.js" data-main="index" ></script>    
 </body>
 </html>
