@@ -18,5 +18,6 @@ interface IRootProps {
 interface IRootState {
   todos: ITodo[];
   fetching: boolean;
-  succeed:boolean;  
+  succeed: boolean;  
+  initialized: boolean;
 }

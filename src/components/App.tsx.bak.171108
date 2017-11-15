@@ -1,10 +1,41 @@
 import * as React from "react";
+import { connect } from "react-redux";
 import TodoList from "./TodoList";
 import TodoInput from "./TodoInput";
-import { Store } from 'redux';
+import { Store, Dispatch, bindActionCreators } from 'redux';
 import appState from "../states/appState";
 import axios , {AxiosResponse} from "axios";
 import * as TodosActions from "../actions/todosActions";
+
+
+interface IOwnProps   {
+    dataUrl: string;
+}
+interface IDispatchProps {
+    reqTodos:typeof TodosActions.reqTodos, 
+    retTodos:typeof TodosActions.retTodos,
+    retError:typeof TodosActions.retError
+}
+interface IStateProps extends IRootState {
+    // 추가 내용 없음.
+}
+
+type Props = IStateProps & IDispatchProps & IOwnProps;
+
+// const todos: ITodo[] = [{title:"Start React with Typescript",completed:false},{title:"Asynchronous Communication", completed:false}];
+
+const mapStateToProps = (state:IStateProps) => {
+    return { ...state }
+}
+
+const mapDispatchToProps = (dispatch:Dispatch<IDispatchProps>) => 
+    bindActionCreators({
+        reqTodos:TodosActions.reqTodos, 
+        retTodos:TodosActions.retTodos,
+        retError:TodosActions.retError}, dispatch)
+
+
+
 /**
  * In Redux, this is a presentational component
  * state를 가지지 않고, container component에서 받는 props 만으로 작동.
@@ -13,28 +44,26 @@ import * as TodosActions from "../actions/todosActions";
  * 기존 프로젝트의 자료구조를 그대로 사용하기 위해 P 자리에 IRootState를 
  * 사용. 
  */
-interface ILocalProps {
+/*
+이전: 
+interface ILocalProps  {
     dataUrl:string ,
     store:Store<IRootState|undefined>
 }
+*/
 
-class RootForRedux extends React.Component<ILocalProps,{}> {
-
-    constructor(props:ILocalProps) {
-        super(props);
-        this.props.store.subscribe(()=>{
-            this.forceUpdate();
-        });
-    }
+class App extends React.Component<Props,{}> {
+    
+    
 
     componentDidMount() {      
-        // 실 행동과 상태 변화가 분리 되어 있다.
-        this.props.store.dispatch(TodosActions.reqTodos( this.props.dataUrl ));
+        // this.props.store.dispatch(TodosActions.reqTodos( this.props.dataUrl ));       
         this.axiosRequest();
     }
     
     // 기성 모듈 axois 의 적용.
     axiosRequest() {
+        this.props.reqTodos( this.props.dataUrl );
         axios
           .get(this.props.dataUrl)
           .then(this.onAxiosRequestSuccess, this.onAxiosRequestError);
@@ -42,19 +71,21 @@ class RootForRedux extends React.Component<ILocalProps,{}> {
 
     // axios에서 callback 의 arguments shape가 특화되어 있다. (AxiosResponse)
     onAxiosRequestSuccess = (response: AxiosResponse): void => {
-        this.props.store.dispatch(
+        /*this.props.store.dispatch(
             TodosActions.retTodos( response.data as ITodo[] )
-        );
-    
+        );*/
+        this.props.retTodos( response.data as ITodo[] )
     };
 
     onAxiosRequestError = (reason: any): void => {
-        this.props.store.dispatch(
+       /* this.props.store.dispatch(
             TodosActions.retError()
-        );
+        ); */
+        this.props.retError();
     };
     
     stateText() {
+        /*
         let state= this.props.store.getState();
         if(state) {
             if(state.fetching) {
@@ -66,6 +97,14 @@ class RootForRedux extends React.Component<ILocalProps,{}> {
             }
         } else {
             return (<span>Internal Error</span>);
+        } */
+
+        if(this.props.fetching) {
+            return (<span>Loding...</span>);
+        } else if(!this.props.succeed) {
+            return (<span>Request Fail</span>);
+        } else {
+            return (<TodoList todos={this.props.todos}  />);
         }
     }
 
@@ -74,11 +113,14 @@ class RootForRedux extends React.Component<ILocalProps,{}> {
         return (   
             // 변경될 사항. <TodoList todos={this.props.todos} />         
             <div>
-            <TodoInput store={this.props.store} />
+            <TodoInput  />
             {this.stateText()}  
             </div>
         )
     }
 }
 
-export default RootForRedux;
+
+
+
+export default connect<IStateProps, IDispatchProps, IOwnProps>(mapStateToProps, mapDispatchToProps)(App);

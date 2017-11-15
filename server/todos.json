@@ -1,4 +1,6 @@
 [
     {"title":"Start React with Typescript","completed":false}
     ,{"title":"Asynchronous Communication", "completed":false}
+    ,{"title":"React with Redux", "completed":false}
+    ,{"title":"React-Redux with Connect", "completed":false}
 ]

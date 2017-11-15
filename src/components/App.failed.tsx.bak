@@ -1,0 +1,169 @@
+import * as React from "react";
+import { Store, Dispatch, bindActionCreators } from 'redux';
+
+import { connect } from "react-redux";
+import TodoList from "./TodoList";
+import TodoInput from "./TodoInput";
+
+import axios , {AxiosResponse} from "axios";
+import * as TodosActions from "../actions/todosActions";
+
+
+interface IOwnProps   {
+    dataUrl: string;
+}
+interface IDispatchProps {
+    reqTodos:typeof TodosActions.reqTodos, 
+    retTodos:typeof TodosActions.retTodos,
+    retError:typeof TodosActions.retError
+}
+interface IStateProps extends IRootState {
+    // 추가 내용 없음.
+}
+
+type Props = IStateProps & IDispatchProps & IOwnProps;
+
+// const todos: ITodo[] = [{title:"Start React with Typescript",completed:false},{title:"Asynchronous Communication", completed:false}];
+
+const mapStateToProps = (state:IStateProps) => {
+    return { ...state }
+}
+
+const mapDispatchToProps = (dispatch:Dispatch<IDispatchProps>) => 
+    bindActionCreators({
+        reqTodos:TodosActions.reqTodos, 
+        retTodos:TodosActions.retTodos,
+        retError:TodosActions.retError}, dispatch)
+
+
+
+/**
+ * In Redux, this is a presentational component
+ * state를 가지지 않고, container component에서 받는 props 만으로 작동.
+ * 이후 이것을 functional component로 바꿀 것이다.
+ * 
+ * 기존 프로젝트의 자료구조를 그대로 사용하기 위해 P 자리에 IRootState를 
+ * 사용. 
+ */
+/*
+이전: 
+interface ILocalProps  {
+    dataUrl:string ,
+    store:Store<IRootState|undefined>
+}
+*/
+
+class App extends React.Component<Props,{}> {
+    
+    
+
+    componentDidMount() {      
+        // this.props.store.dispatch(TodosActions.reqTodos( this.props.dataUrl ));       
+        this.axiosRequest();
+    }
+    
+    // 기성 모듈 axois 의 적용.
+    axiosRequest() {        
+        this.props.reqTodos( this.props.dataUrl );
+        axios
+          .get(this.props.dataUrl)
+          .then(this.onAxiosRequestSuccess, this.onAxiosRequestError);
+    }
+
+    // axios에서 callback 의 arguments shape가 특화되어 있다. (AxiosResponse)
+    onAxiosRequestSuccess = (response: AxiosResponse): void => {
+        /*this.props.store.dispatch(
+            TodosActions.retTodos( response.data as ITodo[] )
+        );*/
+        this.props.retTodos( response.data as ITodo[] )
+    };
+
+    onAxiosRequestError = (reason: any): void => {
+       /* this.props.store.dispatch(
+            TodosActions.retError()
+        ); */
+        this.props.retError();
+    };
+    
+    stateText() {
+        /*
+        let state= this.props.store.getState();
+        if(state) {
+            if(state.fetching) {
+                return (<span>Loding...</span>);
+            } else if(!state.succeed) {
+                return (<span>Request Fail</span>);
+            } else {
+                return (<TodoList todos={state.todos} store={this.props.store} />);
+            }
+        } else {
+            return (<span>Internal Error</span>);
+        } */
+
+        if(this.props.fetching) {
+            return (<span>Loding...</span>);
+        } else if(!this.props.succeed) {
+            return (<span>Request Fail</span>);
+        } else {
+            return (<TodoList todos={this.props.todos}  />);
+        }
+    }
+
+    render() {
+        // 변경될 사항. <TodoList todos={this.props.todos} />         
+        return (   
+            
+            <div>
+            <TodoInput  />
+            {this.stateText()}  
+            </div>
+        )
+    }
+}
+
+const AppFn = (props:Props) => {
+    
+    const onAxiosRequestSuccess = (response: AxiosResponse): void => {
+        props.retTodos( response.data as ITodo[] )
+    };
+
+    const onAxiosRequestError = (reason: any): void => {
+        props.retError();
+    };
+
+    const axiosRequest = ()=> {        
+        props.reqTodos( props.dataUrl );
+        axios
+          .get(props.dataUrl)
+          .then(onAxiosRequestSuccess, onAxiosRequestError);
+    }
+
+    if(!props.initialized) {
+        axiosRequest();
+    }
+    console.log(props);
+    function stateText() {
+        if(props.fetching || !props.initialized) {
+            return (<span>Loding...</span>);
+        } else if(props.succeed) {
+            return (<span>Request Fail</span>);
+        } else {
+            return (<TodoList todos={props.todos}  />);
+        }
+    }
+
+    return (   
+        // 변경될 사항. <TodoList todos={this.props.todos} />         
+        <div>
+        <TodoInput  />
+        {stateText()}  
+        </div>
+    )
+}
+
+// 작동하지 않는다.
+// state update가 일어나질 않는다.
+// 이유: 생성된 Container Component에 storeSubscribe가 null.
+
+export default connect<IStateProps, IDispatchProps, IOwnProps>(
+    mapStateToProps, mapDispatchToProps)(AppFn);

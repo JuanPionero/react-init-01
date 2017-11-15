@@ -33,6 +33,8 @@ export interface TodoStateToggle extends Action {
     index:number;
 }
 
+export type ActionType = RetTodos & ReqTodos & AddTodo & DelTodo & ModTodo & TodoStateToggle
+
 export function isRetTodos(action:Action): action is RetTodos {
     return action.type == COMMAND.RET_TODOS;
 }

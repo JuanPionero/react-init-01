@@ -1,6 +1,7 @@
-const appState : IRootState = {
+let appState : IRootState = {
     todos:[],
     fetching:false,
-    succeed:false
+    succeed:false,
+    initialized:false
 }
 export default appState;
