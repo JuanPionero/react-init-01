@@ -22,7 +22,7 @@ node와 tsc 설치는 생략. (node를 설치하면서, npm도 같이 설치됨�
 		npm install @types/react-dom --save
 
 
-	Folder Structure (Tree)
+	Folder Structure (Tree) : Initial Version
 	│  index.html
 	│  package.json
 	│  tree.txt
@@ -36,3 +36,39 @@ node와 tsc 설치는 생략. (node를 설치하면서, npm도 같이 설치됨�
 		    Root.tsx
 		    TodoItem.tsx
 		    TodoList.tsx
+	
+	===============================
+	
+	Folder Structure (Tree) : for version 6
+	│  index.html
+	│  index.js
+	│  package.json
+	│  tsconfig.json
+	│           
+	├─css
+	│      basic.css
+	│          
+	├─server
+	│      todos.json
+	│      
+	└─src
+	    │  index.tsx
+	    │  typings.d.ts
+	    │  
+	    ├─actions
+	    │      todosActions.ts
+	    │      
+	    ├─components
+	    │      App.tsx
+	    │      TodoInput.tsx
+	    │      TodoItem.tsx
+	    │      TodoList.tsx
+	    │      
+	    ├─modules
+	    │      HttpRequest.ts
+	    │      
+	    ├─reducers
+	    │      todosReducer.ts
+	    │      
+	    └─states
+		    appState.ts
